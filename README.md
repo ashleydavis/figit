@@ -1,4 +1,4 @@
-# typescript-template
+# figit
 
 A template for a TypeScript app. To make it easier to start a new app without having to go through all the configuration.
 
@@ -15,7 +15,7 @@ A template for a TypeScript app. To make it easier to start a new app without ha
 When you want to start a new TypeScript app:
 
 - Copy this repo
-- Search and replace 'typescript-template' to 'your-module-name' across the entire repo
+- Search and replace 'figit' to 'your-module-name' across the entire repo
 - Install your own custom dependencies
 - Add your custom code.
 - Add to your own Github or Bitbucket repo (you can npm install from a Git repo! Even a private one!)
@@ -75,7 +75,7 @@ Open folder in Visual Studio Code and hit Ctrl+Shift+B
 
 Or
 
-    cd typescript-template
+    cd figit
     npm run build
 
 ## Debugging
