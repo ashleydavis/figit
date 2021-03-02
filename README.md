@@ -1,114 +1,125 @@
 # figit
 
-A template for a TypeScript app. To make it easier to start a new app without having to go through all the configuration.
+JavaScript data templates! 
+
+Write code to produce data and output it as JSON or YAML.
+
+I use this to produce Kubernetes configurations from templates.
+
+[Follow the developer on Twitter](https://twitter.com/ashleydavis75) for updates!
 
 ## Features
 
-- Example module.
-- Example command line app (installable via npm install -g)
-- Testing using Jest.
-- Linting using tslint.
-- Debugging setup for VS Code.
+- Produce data from JavaScript code.
+- Use variables, environment variables and whatever data sources you like.
+- Use whatever npm packages you like.
 
-## Usage
+## Trivial example
 
-When you want to start a new TypeScript app:
+Install it:
 
-- Copy this repo
-- Search and replace 'figit' to 'your-module-name' across the entire repo
-- Install your own custom dependencies
-- Add your custom code.
-- Add to your own Github or Bitbucket repo (you can npm install from a Git repo! Even a private one!)
-- If necessary, publish to npm using `npm publish`.
-
-You now have a reusable code module and/or command line app that you can 'npm install' and share with your team mates.
-
-## Get the code
-
-Clone or download and unpack the repo.
-
-Install local dependencies
-
-    cd your-module-name
-    npm install
-
-## Installation
-
-Once you publish you can install via npm and use it from TypeScript or JavaScript or from the command line.
-
-### From code
-
-Import and use it (in a TypeScript file):
-
-```typescript
-import { ExampleClass } from 'your-module-name';
-
-var example = new ExampleClass();
-console.log(example.returnsTrue());
+```bash
+npm install -g figit
 ```
 
-Import and use it (from JavaScript):
+Create a template:
 
 ```javascript
-var yourModule = require('your-module-name');
-var ExampleClass = yourModule.ExampleClass;
-
-var example = new ExampleClass();
-console.log(example.returnsTrue());
+// myfile.js
+module.exports = {
+    /* Whatever code you want here to produce data. */
+    data: {
+        hello: "world",
+    },
+};
 ```
 
-### From command line
+Instantiate data from the template:
 
-You can also run your published module as a command line app.
+```bash
+figit myfile.js
+```
 
-For example, install it globally:
+JSON output:
 
-    npm install -g your-module-name
+```bash
+{
+  "data": {
+    "hello": "world"
+  }
+}
+```
 
-Then run it:
+Or output YAML:
 
-    your-module-name-cli [args]
+```bash
+figit myfile.js --output yaml
+``` 
 
-## Building the code
+YAML output:
 
-Open folder in Visual Studio Code and hit Ctrl+Shift+B
+```bash
+data:
+  hello: "world"
+```
 
-Or
+## More complicated example
 
-    cd figit
-    npm run build
+Here's my usecase for Figit, templating Kubernetes configurations.
 
-## Debugging
+```javascript
+// mydeployment.js
+const APP_NAME = process.env.APP_NAME;
+if (!APP_NAME) {
+    throw new Error(`Expected environment variable ${APP_NAME}`);
+}
 
-- Open in Visual Studio Code.
-- Select 'Main' debug configuration.
-- Select the 'Test All' or 'Test Current' debug configuration to debug all tests or the current test file.
-- Set your breakpoints.
-- Hit F5 to run.
+module.exports = {
+    apiVersion: "apps/v1",
+    kind: "Deployment",
+    metadata: {
+        name: ,
+        labels: {
+            app: APP_NAME,
+        },
+    },
+    spec: {
+        replicas: 3,
+        selector: {
+            matchLabels: {
+                app: APP_NAME,
+            },
+        },
+        template: {
+            metadata: {
+                labels: {
+                    app: APP_NAME,
+                },
+            },
+            spec: {
+                containers: [
+                    {
+                        name: APP_NAME,
+                        image: IMAGE_NAME,
+                        ports: [
+                            {
+                                containerPort: 80,
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+    },
+};
+```
 
-## Build and run
+Then in my deployment pipeline:
 
-Compile the application:
-
-    npm run build
-
-The run the compiled JavaScript:
-
-    npm start
-
-## Running without building
-
-Run the command line app directly:
-
-    npm start:dev
-
-Run tests directly:
-
-    npm test
-
-Or:
-
-    npm run test:watch
+```bash
+export APP_NAME=myapp
+export IMAGE_NAME=myimage:latest
+figit mydeploymnent.js | kubectl create -f -
+```
 
 
-**Checkout** package.json for more scripts!
