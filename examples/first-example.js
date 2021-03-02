@@ -2,39 +2,47 @@
 // Run this example:
 //
 //    set APP_NAME=web-server
-//    set APP_LABEL=web-server
-//    set CONTAINER_NAME=nginx
 //    set IMAGE_NAME=nginx:latest
-//    npx ts-node src\cli.ts examples\first-example.js
+//    npx ts-node src\cli.ts examples\first-example.js --output yaml
 //
+
+const APP_NAME = process.env.APP_NAME;
+if (!APP_NAME) {
+    throw new Error(`Expected environment variable APP_NAME.`);
+}
+
+const IMAGE_NAME = process.env.IMAGE_NAME;
+if (!IMAGE_NAME) {
+    throw new Error(`Expected environment variable IMAGE_NAME.`);
+}
 
 module.exports = {
     apiVersion: "apps/v1",
     kind: "Deployment",
     metadata: {
-        name: process.env.APP_NAME,
+        name: APP_NAME,
         labels: {
-            app: process.env.APP_LABEL,
+            app: APP_NAME,
         },
     },
     spec: {
         replicas: 3,
         selector: {
             matchLabels: {
-                app: process.env.APP_LABEL,
+                app: APP_NAME,
             },
         },
         template: {
             metadata: {
                 labels: {
-                    app: process.env.APP_LABEL,
+                    app: APP_NAME,
                 },
             },
             spec: {
                 containers: [
                     {
-                        name: process.env.CONTAINER_NAME,
-                        image: process.env.IMAGE_NAME,
+                        name: APP_NAME,
+                        image: IMAGE_NAME,
                         ports: [
                             {
                                 containerPort: 80,
