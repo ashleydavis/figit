@@ -14,6 +14,32 @@ I use this to produce Kubernetes configurations from templates.
 - Use variables, environment variables and whatever data sources you like.
 - Use whatever npm packages you like.
 
+## Install it
+
+```bash
+npm install -g figit
+```
+
+## Command line reference
+
+Evaluate `file.js` and output JSON:
+
+```
+figit file.js
+```
+
+Evaluate multiple files and output YAML:
+
+```
+figit file1 file2 fileN --output yaml
+```
+
+General use:
+
+```
+figit [file+] --output "json" | "yaml"
+```
+
 ## Trivial example
 
 Install it:
