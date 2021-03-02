@@ -1,15 +1,7 @@
-import * as moment from "moment";
+import * as YAML from 'yaml'
 
-export class ExampleClass {
-
-    public test(): void {
-        console.log("Test: " + moment().format("YYYY-DD-MM"));
-    }
-
-    public returnsTrue(): boolean {
-        return true;
-    }
+export function figit(filePath: string): string {
+    const data = require(filePath);
+    return YAML.stringify(data);
 
 }
-
-//TODO: Code for your reusable code module goes here.

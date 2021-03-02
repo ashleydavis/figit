@@ -1,5 +1,6 @@
-import { ExampleClass } from "./index";
+import { figit } from ".";
+import * as path from "path";
 
-(new ExampleClass()).test();
-
-//TODO: Code for your command line app goes here.
+const args = process.argv.slice(2);
+const filePath = path.join(__dirname, "..", args[0]);
+console.log(figit(filePath));
