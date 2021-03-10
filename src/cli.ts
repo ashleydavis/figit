@@ -4,7 +4,7 @@ import * as minimist from "minimist";
 
 async function main(): Promise<void> {
     const argv = minimist(process.argv.slice(2));
-    const filePaths = argv._.map(filePath => path.resolve(__dirname, "..", filePath));
+    const filePaths = argv._.map(filePath => path.resolve(filePath));
     if (filePaths.length === 0) {
         console.error(`No files specified.`);
         console.log(`Usage: figit [files...] --output=json|yaml`)
