@@ -1,7 +1,7 @@
 {
     "name": "figit",
-    "version": "0.0.1",
-    "description": "A template for a TypeScript app. To make it easier to start a new app without having to go through all the configuration.",
+    "version": "0.0.2",
+    "description": "JavaScript data templates - Write code to produce data and output it as JSON or YAML.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "scripts": {
