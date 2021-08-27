@@ -22,6 +22,7 @@
         "arrow-parens": false,
         "comment-format": false,
         "no-var-requires": false,
+        "no-unnecessary-initializer": false,
         "trailing-comma": [
             true,
             {
