@@ -1,8 +1,19 @@
 import * as YAML from 'yaml'
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
 import * as handlebars from 'handlebars';
 
 export interface IFigitOptions {
+    //
+    // Loads a JSON or Yaml data file to use as template data.
+    //
+    dataFilePath?: string;
+
+    //
+    // Sets standard input to be received as template data in JSON or Yaml format.
+    //
+    stdin?: "json" | "yaml";
+
     //
     // Template files to process and export.
     //
@@ -23,25 +34,7 @@ export async function* figit(options: IFigitOptions): AsyncIterable<string> {
     }
 
     for (const filePath of options.filePaths) {
-        let data: any;
-        if (filePath.endsWith(".js")) {
-            data = require(filePath);
-        }
-        else if (filePath.endsWith(".json")) {
-            const fileData = await fs.readFile(filePath, "utf8");
-            const template = handlebars.compile(fileData);
-            let templateData: any = Object.assign({}, process.env);
-            data = JSON.parse(template(templateData));
-        }
-        else if (filePath.endsWith(".yaml")) {
-            const fileData = await fs.readFile(filePath, "utf8");
-            const template = handlebars.compile(fileData);
-            let templateData: any = Object.assign({}, process.env);
-            data = YAML.parse(template(templateData));
-        }
-        else {
-            throw new Error(`Unexpected input file type: ${filePath}.`);
-        }
+        const data = await loadTemplatedDataFile(filePath, options);
 
         if (options.output === undefined || options.output === "json") {
             yield JSON.stringify(data, null, 4);
@@ -54,4 +47,95 @@ export async function* figit(options: IFigitOptions): AsyncIterable<string> {
         }
     }
 
+}
+
+//
+// Supported methods of parsing data.
+//
+const dataTypes = [
+    {
+        ext: ".json",
+        parse: (fileData: string) => JSON.parse(fileData),
+    },
+    {
+        ext: ".yaml",
+        parse: (fileData: string) => YAML.parse(fileData),
+    },
+];
+
+//
+// Loads a normal (non-templated) data file.
+//
+export async function loadDataFile(filePath: string): Promise<any> {
+    let dataType = undefined;
+
+    for (const type of dataTypes) {
+        if (filePath.endsWith(type.ext)) {
+            dataType = type;
+            break;
+        }
+    }
+
+    if (dataType === undefined) {
+        throw new Error(`Unexpected data file type: ${filePath}`);
+    }
+
+    const fileData = await fsPromises.readFile(filePath, "utf-8");
+    return dataType.parse(fileData);
+}
+
+//
+// Loads and expands a templated data file.
+//
+async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): Promise<any> {
+    if (filePath.endsWith(".js")) {
+        // Executes a JavaScript file.
+        return require(filePath);
+    }
+    else {
+        // Loads and expands a templated data file.
+        let dataType = undefined;
+
+        for (const type of dataTypes) {
+            if (filePath.endsWith(type.ext)) {
+                dataType = type;
+                break;
+            }
+        }
+
+        if (dataType === undefined) {
+            throw new Error(`Unexpected input file type: ${filePath}`);
+        }
+
+        const fileData = await fsPromises.readFile(filePath, "utf-8");
+        const template = handlebars.compile(fileData);
+
+        let baseTemplateData: any = {};
+        if (options.dataFilePath) {
+            baseTemplateData = await loadDataFile(options.dataFilePath);           
+        }
+
+        let overrideTemplateData: any = undefined;
+        if (options.stdin === "json") {
+            overrideTemplateData = JSON.parse(fs.readFileSync(process.stdin.fd, { encoding: "utf-8" }));
+        }
+        else if (options.stdin === "yaml") {
+            overrideTemplateData = YAML.parse(fs.readFileSync(process.stdin.fd, { encoding: "utf-8" }));
+        }
+        else if (options.stdin !== undefined) {
+            throw new Error(`Invalid input format to read from standard input: ${options.stdin}`);
+        }
+
+        console.log(`Base data:`);
+        console.log(baseTemplateData);
+
+        console.log(`Override data:`);
+        console.log(overrideTemplateData);
+
+        let templateData: any = Object.assign(baseTemplateData, process.env, overrideTemplateData);
+        console.log("Final template data:");
+        console.log(templateData); //fio:
+        const expandedData = template(templateData);
+        return dataType.parse(expandedData);
+    }
 }

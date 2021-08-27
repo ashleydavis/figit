@@ -5,6 +5,10 @@
 #    set IMAGE_NAME=nginx:latest
 #    npx ts-node src\cli.ts examples\example.yaml --output yaml
 #
+# Or:
+#
+#   npx ts-node src\cli.ts examples\example.yaml --output yaml --stdin yaml --data examples\base-data.json < examples\override-data.json
+#
 
 apiVersion: apps/v1
 kind: Deployment

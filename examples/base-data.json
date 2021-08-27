@@ -1,0 +1,4 @@
+{
+    "APP_NAME": "web-server",
+    "IMAGE_NAME": "nginx:latest"
+}

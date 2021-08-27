@@ -1,4 +1,4 @@
-import { figit } from ".";
+import { figit, IFigitOptions } from ".";
 import * as path from "path";
 import * as minimist from "minimist";
 
@@ -13,7 +13,13 @@ async function main(): Promise<void> {
         process.exit(1);
     }
 
-    for await (const output of figit({ filePaths: filePaths, output: argv.output })) {
+    const options: IFigitOptions = { 
+        filePaths: filePaths, 
+        output: argv.output,
+        stdin: argv.stdin,
+        dataFilePath: argv.data,
+    };
+    for await (const output of figit(options)) {
         console.log(output);
     }
 }
@@ -21,6 +27,6 @@ async function main(): Promise<void> {
 main()
     .catch(err => {
         console.error(`An error occurred.`);
-        console.error(err.message || err.stack || err);
+        console.error(err && err.stack || err);
         process.exit(1);
     });
