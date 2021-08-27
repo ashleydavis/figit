@@ -126,15 +126,7 @@ async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): 
             throw new Error(`Invalid input format to read from standard input: ${options.stdin}`);
         }
 
-        console.log(`Base data:`);
-        console.log(baseTemplateData);
-
-        console.log(`Override data:`);
-        console.log(overrideTemplateData);
-
-        let templateData: any = Object.assign(baseTemplateData, process.env, overrideTemplateData);
-        console.log("Final template data:");
-        console.log(templateData); //fio:
+        const templateData: any = Object.assign(baseTemplateData, process.env, overrideTemplateData);
         const expandedData = template(templateData);
         return dataType.parse(expandedData);
     }
