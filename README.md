@@ -1,8 +1,6 @@
 # figit
 
-JavaScript and Handlebars data templates! 
-
-Write code to produce data and output it as JSON or YAML.
+JavaScript and Handlebars data templates - Producing templated configuration has never been easer!
 
 Or expand JSON and YAML templates using [Handlebars](https://handlebarsjs.com/) template syntax.
 

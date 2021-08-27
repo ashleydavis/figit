@@ -1,7 +1,7 @@
 {
     "name": "figit",
-    "version": "0.0.3",
-    "description": "JavaScript data templates - Write code to produce data and output it as JSON or YAML.",
+    "version": "0.0.4",
+    "description": "JavaScript and Handlebars data templates - Producing templated configuration has never been easer!",
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "scripts": {
