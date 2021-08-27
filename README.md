@@ -1,6 +1,6 @@
 # figit
 
-JavaScript and Handlebars data templates - Producing templated configuration has never been easer!
+JavaScript and Handlebars data templates - Producing templated configuration has never been easier!
 
 Or expand JSON and YAML templates using [Handlebars](https://handlebarsjs.com/) template syntax.
 

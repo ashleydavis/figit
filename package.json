@@ -1,7 +1,7 @@
 {
     "name": "figit",
-    "version": "0.0.4",
-    "description": "JavaScript and Handlebars data templates - Producing templated configuration has never been easer!",
+    "version": "0.0.5",
+    "description": "JavaScript and Handlebars data templates - Producing templated configuration has never been easier!",
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "scripts": {
