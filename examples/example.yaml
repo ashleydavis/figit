@@ -1,0 +1,26 @@
+#
+# Run this example:
+#
+#    set APP_NAME=web-server
+#    set IMAGE_NAME=nginx:latest
+#    npx ts-node src\cli.ts examples\example.yaml --output yaml
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{APP_NAME}}
+spec:
+  selector:
+    matchLabels:
+      app: {{APP_NAME}}
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}
+    spec:
+      containers:
+      - name: {{APP_NAME}}
+        image: {{IMAGE_NAME}}
+        ports:
+        - containerPort: 80

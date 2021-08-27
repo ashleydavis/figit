@@ -36,6 +36,7 @@
     },
     "homepage": "https://github.com/ashleydavis/figit#readme",
     "dependencies": {
+        "handlebars": "^4.7.7",
         "minimist": "^1.2.5",
         "yaml": "^1.10.0"
     },

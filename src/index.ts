@@ -1,4 +1,6 @@
 import * as YAML from 'yaml'
+import * as fs from 'fs/promises';
+import * as handlebars from 'handlebars';
 
 export interface IFigitOptions {
     //
@@ -21,7 +23,26 @@ export async function* figit(options: IFigitOptions): AsyncIterable<string> {
     }
 
     for (const filePath of options.filePaths) {
-        const data = require(filePath);
+        let data: any;
+        if (filePath.endsWith(".js")) {
+            data = require(filePath);
+        }
+        else if (filePath.endsWith(".json")) {
+            const fileData = await fs.readFile(filePath, "utf8");
+            const template = handlebars.compile(fileData);
+            let templateData: any = Object.assign({}, process.env);
+            data = JSON.parse(template(templateData));
+        }
+        else if (filePath.endsWith(".yaml")) {
+            const fileData = await fs.readFile(filePath, "utf8");
+            const template = handlebars.compile(fileData);
+            let templateData: any = Object.assign({}, process.env);
+            data = YAML.parse(template(templateData));
+        }
+        else {
+            throw new Error(`Unexpected input file type: ${filePath}.`);
+        }
+
         if (options.output === undefined || options.output === "json") {
             yield JSON.stringify(data, null, 4);
         }

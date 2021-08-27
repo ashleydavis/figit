@@ -3,7 +3,7 @@
 //
 //    set APP_NAME=web-server
 //    set IMAGE_NAME=nginx:latest
-//    npx ts-node src\cli.ts examples\first-example.js --output yaml
+//    npx ts-node src\cli.ts examples\example.js --output yaml
 //
 
 const APP_NAME = process.env.APP_NAME;
