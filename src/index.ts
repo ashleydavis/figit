@@ -32,21 +32,30 @@ export async function* figit(options: IFigitOptions): AsyncIterable<string> {
     if (options.filePaths === undefined || options.filePaths.length === 0) {
         throw new Error(`No file paths specified, please set "filePaths" to an array of paths for template.`);
     }
+    
+
+
+    const dataType = dataTypes.find(type => type.ext === "." + (options.output || "json"));
+    if (dataType === undefined) {
+        throw Error(`Invalid output format ${options.output}, expected "json" or "yaml".`);
+    }
+
+    let numOutputs = 0;
 
     for (const filePath of options.filePaths) {
         const data = await loadTemplatedDataFile(filePath, options);
+        for (const entry of data) {
 
-        if (options.output === undefined || options.output === "json") {
-            yield JSON.stringify(data, null, 4);
-        }
-        else if (options.output === "yaml") {
-            yield YAML.stringify(data);
-        }
-        else {
-            throw Error(`Invalid output format ${options.output}, expected "json" or "yaml".`);
+            if (options.output === "yaml" && numOutputs > 0) {
+                // Separator for YAML documents.
+                yield "---";
+            }
+
+            yield dataType.stringify(entry);
+
+            numOutputs += 1;
         }
     }
-
 }
 
 //
@@ -55,11 +64,15 @@ export async function* figit(options: IFigitOptions): AsyncIterable<string> {
 const dataTypes = [
     {
         ext: ".json",
-        parse: (fileData: string) => JSON.parse(fileData),
+        parseSingle: (fileData: string) => JSON.parse(fileData),
+        parseMulti: (fileData: string) => [JSON.parse(fileData)],
+        stringify: (entry: any) => JSON.stringify(entry, null, 4),
     },
     {
         ext: ".yaml",
-        parse: (fileData: string) => YAML.parse(fileData),
+        parseSingle: (fileData: string) => YAML.parse(fileData),
+        parseMulti: (fileData: string) => YAML.parseAllDocuments(fileData),
+        stringify: (entry: any) => YAML.stringify(entry),
     },
 ];
 
@@ -81,13 +94,13 @@ export async function loadDataFile(filePath: string): Promise<any> {
     }
 
     const fileData = await fsPromises.readFile(filePath, "utf-8");
-    return dataType.parse(fileData);
+    return dataType.parseSingle(fileData);
 }
 
 //
 // Loads and expands a templated data file.
 //
-async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): Promise<any> {
+async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): Promise<any[]> {
     if (filePath.endsWith(".js")) {
         // Executes a JavaScript file.
         return require(filePath);
@@ -128,6 +141,6 @@ async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): 
 
         const templateData: any = Object.assign(baseTemplateData, process.env, overrideTemplateData);
         const expandedData = template(templateData);
-        return dataType.parse(expandedData);
+        return dataType.parseMulti(expandedData);
     }
 }
