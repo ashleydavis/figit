@@ -6,7 +6,7 @@ Or expand JSON and YAML templates using [Handlebars](https://handlebarsjs.com/) 
 
 I use this to produce Kubernetes configurations from templates.
 
-[Follow the developer on Twitter](https://twitter.com/ashleydavis75) for updates!
+If you like this project, please star this repo and [support my work](https://www.codecapers.com.au/about#support-my-work)
 
 ## Features
 
