@@ -130,10 +130,10 @@ async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): 
 
         let overrideTemplateData: any = undefined;
         if (options.stdin === "json") {
-            overrideTemplateData = JSON.parse(fs.readFileSync(process.stdin.fd, { encoding: "utf-8" }));
+            overrideTemplateData = JSON.parse(fs.readFileSync(0, { encoding: "utf-8" }));
         }
         else if (options.stdin === "yaml") {
-            overrideTemplateData = YAML.parse(fs.readFileSync(process.stdin.fd, { encoding: "utf-8" }));
+            overrideTemplateData = YAML.parse(fs.readFileSync(0, { encoding: "utf-8" }));
         }
         else if (options.stdin !== undefined) {
             throw new Error(`Invalid input format to read from standard input: ${options.stdin}`);
