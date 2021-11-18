@@ -121,7 +121,7 @@ async function loadTemplatedDataFile(filePath: string, options: IFigitOptions): 
         }
 
         const fileData = await fsPromises.readFile(filePath, "utf-8");
-        const template = handlebars.compile(fileData);
+        const template = handlebars.compile(fileData, { noEscape: true });
 
         let baseTemplateData: any = {};
         if (options.dataFilePath) {
